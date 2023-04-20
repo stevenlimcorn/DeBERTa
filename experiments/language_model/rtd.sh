@@ -16,14 +16,13 @@ function setup_wiki_data(){
 	fi
 
 	if [[ ! -e  $data_dir/test.txt ]]; then
-		wget -q https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-103-v1.zip -O $cache_dir/wiki103.zip
-		unzip -j $cache_dir/wiki103.zip -d $cache_dir/wiki103
-		mkdir -p $data_dir
-		python ./prepare_data.py -i $cache_dir/wiki103/wiki.train.tokens -o $data_dir/train.txt --max_seq_length $max_seq_length
-		python ./prepare_data.py -i $cache_dir/wiki103/wiki.valid.tokens -o $data_dir/valid.txt --max_seq_length $max_seq_length
-		python ./prepare_data.py -i $cache_dir/wiki103/wiki.test.tokens -o $data_dir/test.txt --max_seq_length $max_seq_length
+		python ./prepare_data.py -i /content/train_raw.txt -o $data_dir/train.txt --max_seq_length $max_seq_length
+		python ./prepare_data.py -i /content/valid_raw.txt -o $data_dir/valid.txt --max_seq_length $max_seq_length
+		python ./prepare_data.py -i /content/test_raw.txt -o $data_dir/test.txt --max_seq_length $max_seq_length
 	fi
 }
+
+
 
 setup_wiki_data
 
@@ -33,16 +32,16 @@ init=$1
 tag=$init
 case ${init,,} in
 	deberta-v3-xsmall-continue)
-	# wget https://huggingface.co/microsoft/deberta-v3-xsmall/resolve/main/pytorch_model.generator.bin
-	# wget https://huggingface.co/microsoft/deberta-v3-xsmall/resolve/main/pytorch_model.bin
+	wget https://huggingface.co/microsoft/deberta-v3-xsmall/resolve/main/pytorch_model.generator.bin
+	wget https://huggingface.co/microsoft/deberta-v3-xsmall/resolve/main/pytorch_model.bin
 	parameters=" --num_train_epochs 1 \
 	--model_config rtd_xsmall.json \
 	--warmup 10000 \
 	--num_training_steps 100000 \
 	--learning_rate 5e-5 \
 	--train_batch_size 256 \
-	--init_generator <TODO: generator checkpoint> \
-	--init_discriminator <TODO: discriminator checkpoint> \
+	--init_generator pytorch_model.generator.bin \
+	--init_discriminator pytorch_model.bin \
 	--decoupled_training True \
 	--fp16 True "
 		;;
@@ -56,16 +55,16 @@ case ${init,,} in
 	--fp16 True "
 		;;
 	deberta-v3-small-continue)
-	# wget https://huggingface.co/microsoft/deberta-v3-small/resolve/main/pytorch_model.generator.bin
-	# wget https://huggingface.co/microsoft/deberta-v3-small/resolve/main/pytorch_model.bin
+	wget https://huggingface.co/microsoft/deberta-v3-small/resolve/main/pytorch_model.generator.bin
+	wget https://huggingface.co/microsoft/deberta-v3-small/resolve/main/pytorch_model.bin
 	parameters=" --num_train_epochs 1 \
 	--model_config rtd_small.json \
 	--warmup 10000 \
 	--num_training_steps 100000 \
 	--learning_rate 5e-5 \
 	--train_batch_size 256 \
-	--init_generator <TODO: generator checkpoint> \
-	--init_discriminator <TODO: discriminator checkpoint> \
+	--init_generator pytorch_model.generator.bin \
+	--init_discriminator pytorch_model.bin \
 	--decoupled_training True \
 	--fp16 True "
 		;;
