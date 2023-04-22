@@ -16,9 +16,9 @@ function setup_wiki_data(){
 	fi
 
 	if [[ ! -e  $data_dir/test.txt ]]; then
-		python ./prepare_data.py -i /content/train_raw.txt -o $data_dir/train.txt --max_seq_length $max_seq_length
-		python ./prepare_data.py -i /content/valid_raw.txt -o $data_dir/valid.txt --max_seq_length $max_seq_length
-		python ./prepare_data.py -i /content/test_raw.txt -o $data_dir/test.txt --max_seq_length $max_seq_length
+		python ./prepare_data.py -i /train_raw.txt -o $data_dir/train.txt --max_seq_length $max_seq_length
+		python ./prepare_data.py -i /valid_raw.txt -o $data_dir/valid.txt --max_seq_length $max_seq_length
+		python ./prepare_data.py -i /test_raw.txt -o $data_dir/test.txt --max_seq_length $max_seq_length
 	fi
 }
 
@@ -77,12 +77,18 @@ case ${init,,} in
 	--decoupled_training True \
 	--fp16 True "
 		;;
-	deberta-v3-large)
-	parameters=" --num_train_epochs 1 \
+	deberta-v3-large-continue)
+	wget https://huggingface.co/microsoft/deberta-v3-large/resolve/main/pytorch_model.generator.bin
+	wget https://huggingface.co/microsoft/deberta-v3-large/resolve/main/pytorch_model.bin
+	parameters=" --num_train_epochs 10 \
 	--model_config rtd_large.json \
 	--warmup 10000 \
-	--learning_rate 1e-4 \
-	--train_batch_size 256 \
+	--learning_rate 5e-5 \
+	--train_batch_size 8 \
+	--eval_batch_size 8 \
+  	--predict_batch_size 8 \
+	--init_generator pytorch_model.generator.bin \
+	--init_discriminator pytorch_model.bin \
 	--decoupled_training True \
 	--fp16 True "
 		;;
@@ -99,7 +105,8 @@ esac
 python -m DeBERTa.apps.run --model_config config.json  \
 	--tag $tag \
 	--do_train \
-	--num_training_steps 1000000 \
+	--do_eval \
+	--do_predict \
 	--max_seq_len $max_seq_length \
 	--dump 10000 \
 	--task_name $Task \
