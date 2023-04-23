@@ -83,7 +83,7 @@ case ${init,,} in
 	wget https://huggingface.co/microsoft/deberta-v3-large/resolve/main/pytorch_model.bin
 	parameters=" --num_train_epochs 10 \
 	--model_config rtd_large.json \
-	--warmup 10000 \
+	--warmup 0.1 \
 	--learning_rate 5e-5 \
 	--train_batch_size 8 \
 	--init_generator pytorch_model.generator.bin \
