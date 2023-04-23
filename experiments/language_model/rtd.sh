@@ -85,7 +85,7 @@ case ${init,,} in
 	--model_config rtd_large.json \
 	--warmup 0.1 \
 	--learning_rate 5e-5 \
-	--train_batch_size 8 \
+	--train_batch_size 4 \
 	--init_generator pytorch_model.generator.bin \
 	--init_discriminator pytorch_model.bin \
 	--decoupled_training True \
