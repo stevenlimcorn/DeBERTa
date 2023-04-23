@@ -86,8 +86,6 @@ case ${init,,} in
 	--warmup 10000 \
 	--learning_rate 5e-5 \
 	--train_batch_size 8 \
-	--eval_batch_size 8 \
-  	--predict_batch_size 8 \
 	--init_generator pytorch_model.generator.bin \
 	--init_discriminator pytorch_model.bin \
 	--decoupled_training True \
@@ -106,8 +104,6 @@ esac
 python -m DeBERTa.apps.run --model_config config.json  \
 	--tag $tag \
 	--do_train \
-	--do_eval \
-	--do_predict \
 	--max_seq_len $max_seq_length \
 	--dump 10000 \
 	--task_name $Task \
